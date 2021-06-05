@@ -1,0 +1,154 @@
+\documentclass{beamer}
+
+\usefonttheme[onlymath]{serif}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{bussproofs}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[style=alphabetic]{biblatex}
+
+\addbibresource{bib.bib}
+%Information to be included in the title page:
+\title{Aspects of efficiency in functional programming languages}
+\author{Samuel Valdemar Grange}
+\institute{Department of Mathematics and Computer Science (IMADA)}
+\date{}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Programming languages}
+\begin{itemize}
+    \item The basis of functional programming languages.
+    \begin{itemize}
+        \item High-level programming language.
+    \end{itemize}
+    \item Recursion and lambda lifting.
+    \item Runtime systems.\\
+    \texttt{fun f x = x + (f (x - 1)); fun main = f 5;}\\
+    $\Rightarrow$ $\texttt{let } f = \lambda x.x + (\textit{f } (x - 1)) \texttt{ in } \textit{f } 5$
+    \\or\\
+    $\Rightarrow$ $\texttt{let } f' = (\lambda f''. \texttt{let } f = f'' f'' \texttt{ in }$\\
+    \hspace*{1cm}$\texttt{let } f = \lambda x.x + (\textit{f } (x - 1))$\\
+    $) \texttt{ in } \texttt{let } f = f' f' \texttt{ in } \textit{f } 5$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Types}
+\begin{columns}
+    \begin{column}{0.6\textwidth}
+        \begin{itemize}
+            \item Mono, poly and environment.
+            \item Generalization and instantitation.
+            \item Let polymorphism and type hierachy ($\sqsubseteq$).
+        \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.4\textwidth}
+        \begin{align}
+        \tau &::= a \,|\, \tau \rightarrow \tau \,|\, C\tau_1 \dots \tau_n \tag*{}\\
+        \sigma &::= \tau \,|\, \forall a.\sigma \tag*{}\\
+        \Gamma &::= \epsilon \,|\, \Gamma, x: \sigma \tag*{}
+        \end{align}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reconstruction}
+    \begin{itemize}
+        \item Checking is top-down, inference is bottom-up.
+        \item Begin at leaf; variable (introduced by Abs) or number, then go back up while gathering constraints.
+        \item Constraints generated from \textit{most general unifier} in the form of substitutions.
+        \item Constraints are only imposed on non-bound type variables.
+        \item Generalization over (locally) free type variables and instantitation over quantified type variables.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Polymorphism}
+\begin{itemize}
+    \item Let vs Abs + App; $\texttt{let } x = e \texttt{ in } y \Leftrightarrow (\lambda x. y) e$?
+    \item Abs (potentially) introduces polymorphic types and App must accept polymorphic parameters (even themselves $\Leftrightarrow$ polymorphic recursion).
+\end{itemize}
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \begin{prooftree}
+        \AxiomC{$\Gamma, x: \tau_1 \vdash e: \tau_2$}
+        \LeftLabel{Abs}
+        \UnaryInfC{$\Gamma \vdash \lambda x.e : \tau_1 \rightarrow \tau_2$}
+    \end{prooftree}
+    \caption{Abs in Hindley-Milner}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \begin{prooftree}
+        \AxiomC{$\Gamma, x: \sigma \vdash e: \tau$}
+        \LeftLabel{Abs}
+        \UnaryInfC{$\Gamma \vdash \lambda x.e : \sigma \rightarrow \tau$}
+    \end{prooftree}
+    \caption{Abs in System F~\cite{WELLS1999111}}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{1\textwidth}
+    \centering
+    \begin{prooftree}
+        \AxiomC{$\Gamma \vdash e_1: \tau_1 \rightarrow \tau_2$}
+        \AxiomC{$\Gamma \vdash e_2: \tau_1$}
+        \LeftLabel{App}
+        \BinaryInfC{$\Gamma \vdash e_1 e_2 : \tau_2$}
+    \end{prooftree}
+    \caption{App in Hindley-Milner}
+    \end{subfigure}
+    \begin{subfigure}[b]{1\textwidth}
+    \centering
+    \begin{prooftree}
+        \AxiomC{$\Gamma \vdash e_1: \sigma \rightarrow \tau$}
+        \AxiomC{$\Gamma \vdash e_2: \sigma$}
+        \LeftLabel{App}
+        \BinaryInfC{$\Gamma \vdash e_1 e_2 : \tau$}
+    \end{prooftree}
+    \caption{App in System F~\cite{WELLS1999111}}
+    \end{subfigure}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Polymorphism cont.}
+    \begin{itemize}
+        \item How does one unify to polymorphic types?.
+        \item Boils down to a problem named semi-unification, which is undecidable~\cite{WELLS1999111,NAMEHERE}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Errata}
+    \begin{itemize}
+        \item "Considerations of functional programming language implmentations."
+        \item Multi let and mutual recursion (the reconstruction algorithm being trivial).
+    \end{itemize}
+    \begin{figure}
+    \hspace*{-1.5cm}
+    \begin{subfigure}[b]{1\textwidth}
+    \begin{prooftree}
+        \AxiomC{$\Gamma, x_1: \tau_1 \dots, x_n: \tau_n \vdash e_1: \sigma_1, \dots e_n: \sigma_n$}
+        \AxiomC{$\Gamma, x_1: \sigma_1 \dots, x_n: \sigma_n  \vdash e: \tau$}
+        \BinaryInfC{$\Gamma \vdash \texttt{let } \{x_1 = e_1, \dots x_n = e_n\} \texttt{ in } e: \tau$}
+    \end{prooftree}
+    \caption{Multi Let proof rule.}
+    \end{subfigure}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \printbibliography
+\end{frame}
+
+\end{document}
