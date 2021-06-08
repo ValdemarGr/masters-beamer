@@ -60,6 +60,50 @@
 \end{frame}
 
 \begin{frame}
+\frametitle{Hindley-Milner}
+\begin{figure}
+            \begin{prooftree}
+                \AxiomC{$x: \sigma \in \Gamma$}
+                \LeftLabel{Var}
+                \UnaryInfC{$\Gamma\vdash x:\sigma$}
+            \end{prooftree}
+            \begin{prooftree}
+                \AxiomC{$\Gamma \vdash e_1 : \tau_1 \rightarrow \tau_2$}
+                \LeftLabel{App}
+                \AxiomC{$\Gamma \vdash e_2 : \tau_1$}
+                \BinaryInfC{$\Gamma \vdash e_1 e_2 : \tau_2$}
+            \end{prooftree}
+    
+            \begin{prooftree}
+                \AxiomC{$\Gamma, x: \tau_1 \vdash e : \tau_2$}
+                \LeftLabel{Abs}
+                \UnaryInfC{$\Gamma \vdash \lambda x . e : \tau_1 \rightarrow \tau_2$}
+            \end{prooftree}
+            \begin{prooftree}
+                \AxiomC{$\Gamma \vdash e_1 : \sigma$}
+                \LeftLabel{Let}
+                \AxiomC{$\Gamma ,x : \sigma \vdash e_2 : \tau$}
+                \BinaryInfC{$\Gamma \vdash \texttt{let } x = e_1 \texttt{ in } e_2 : \tau$}
+            \end{prooftree}
+    
+            \begin{prooftree}
+                \AxiomC{$\Gamma \vdash e : \sigma_1$}
+                \AxiomC{$\sigma_1 \sqsubseteq \sigma_2$}
+                \LeftLabel{Inst}
+                \BinaryInfC{$\Gamma \vdash e : \sigma_2$}
+            \end{prooftree}
+            \begin{prooftree}
+                \AxiomC{$\Gamma \vdash e : \sigma$}
+                \AxiomC{$a \notin \textit{free}(\Gamma)$}
+                \LeftLabel{Gen}
+                \BinaryInfC{$\Gamma \vdash e : \forall a . \sigma$}
+            \end{prooftree}
+        \caption{Hindley-Milner type rules}
+        \label{fig:hmrules}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
 \frametitle{Reconstruction}
     \begin{itemize}
         \item Checking is top-down, inference is bottom-up.
@@ -68,6 +112,44 @@
         \item Constraints are only imposed on non-bound type variables.
         \item Generalization over (locally) free type variables and instantitation over quantified type variables.
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Damas-Milner}
+\begin{figure}
+    
+            \begin{prooftree}
+                \AxiomC{$x: \sigma \in \Gamma$}
+                \AxiomC{$\tau = \textit{inst}(\sigma)$}
+                \LeftLabel{Var}
+                \BinaryInfC{$\Gamma \vdash x:\tau , \emptyset$}
+            \end{prooftree}
+            \begin{prooftree}
+                \AxiomC{$\tau_1 = \textit{fresh}$}
+                \AxiomC{$\Gamma, x: \tau_1 \vdash e: \tau_2, S$}
+                \LeftLabel{Abs}
+                \BinaryInfC{$\Gamma \vdash \lambda x . e : S\tau_1 \rightarrow \tau_2, S$}
+            \end{prooftree}
+    
+            \begin{center}
+                App
+            \end{center}
+            \vspace{-0.7cm}
+            \begin{prooftree}
+                \AxiomC{$\Gamma \vdash e_1 : \tau_1, S_1 \,\, \tau_3 = \textit{fresh}$}
+                \AxiomC{$S_1 \Gamma \vdash e_2 : \tau_2, S_2 \,\, S_3 = \textit{unify}(S_2 \tau_1, \tau_2 \rightarrow \tau_3)$}
+                \BinaryInfC{$\Gamma \vdash e_1 e_2 : S_3 \tau_3, S_3 \cdot S_2 \cdot S_1$}
+            \end{prooftree}
+    
+            \begin{prooftree}
+                \AxiomC{$\Gamma \vdash e_1 : \tau_1, S_1$}
+                \AxiomC{$S_1 \Gamma , x : (S_1 \Gamma)(\tau_1) \vdash e_2 : \tau_2, S_2$}
+                \LeftLabel{Let}
+                \BinaryInfC{$\Gamma \vdash \texttt{let } x = e_1 \texttt{ in } e_2 : \tau_2, S_2 \cdot S_1$}
+            \end{prooftree}
+      \caption{Algorithm W. Note that $\Gamma(\tau)$ means the generalization of $\tau$ under $\Gamma$.}
+        \label{fig:dmrules}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -132,7 +214,11 @@
 \frametitle{Errata}
     \begin{itemize}
         \item "Considerations of functional programming language implmentations."
-        \item Multi let and mutual recursion (the reconstruction algorithm being trivial).
+        \item Multi let for shared scopes (mutual recursion) (the reconstruction algorithm).
+        \item Type constructors and sum-types missing (implemented in the fixes branch as described in the thesis).\\
+        \texttt{type Stack a = | Nil}\\
+        \texttt{-| Cons a (List a);}\\
+        \texttt{+| Cons a (Stack a);}
     \end{itemize}
     \begin{figure}
     \hspace*{-1.5cm}
@@ -145,6 +231,16 @@
     \caption{Multi Let proof rule.}
     \end{subfigure}
     \end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Evaluation}
+    \begin{itemize}
+        \item Evaluation by substitution.
+        \item Call by need and call by value.
+        \item Storing labelled expressions.
+        \item Freshness.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
