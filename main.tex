@@ -211,14 +211,21 @@
 \end{frame}
 
 \begin{frame}
+\frametitle{Evaluation}
+    \begin{itemize}
+        \item Evaluation by substitution.
+        \item Call by need and call by value.
+        \item Storing labelled expressions.
+        \item Freshness.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
 \frametitle{Errata}
     \begin{itemize}
         \item "Considerations of functional programming language implmentations."
         \item Multi let for shared scopes (mutual recursion) (the reconstruction algorithm).
-        \item Type constructors and sum-types missing (implemented in the fixes branch as described in the thesis).\\
-        \texttt{type Stack a = | Nil}\\
-        \texttt{-| Cons a (List a);}\\
-        \texttt{+| Cons a (Stack a);}
     \end{itemize}
     \begin{figure}
     \hspace*{-1.5cm}
@@ -234,12 +241,18 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{Evaluation}
+  \frametitle{Errata}
     \begin{itemize}
-        \item Evaluation by substitution.
-        \item Call by need and call by value.
-        \item Storing labelled expressions.
-        \item Freshness.
+      \item Type constructors and sum-types missing (implemented in the fixes branch as described in the thesis).\\
+        \vspace*{0.5cm}
+        \texttt{type Stack a = | Nil}\\
+        \texttt{-| Cons a (List a);}\\
+        \texttt{+| Cons a (Stack a);}\\
+        \vspace*{0.5cm}
+        \texttt{-introduced Cons with type $\forall$c0.$\forall$d0.$\forall$e0.$\forall$g0.(c0 -> (d0 -> (e0 -> ((c0 -> (d0 -> g0)) -> g0))))}\\
+        \texttt{+introduced Cons with type $\forall$adt\_f0.(adt\_f0 -> ((ADT(List) adt\_f0) -> (ADT(List) adt\_f0)))}\\
+        \vspace*{0.5cm}
+        \texttt{-applied ((Cons 1) ((Cons 2) ((Cons 3) Nil))) with type ((Integer ) -> (((Integer ) -> ((h1 -> (((Integer ) -> ((n1 -> (((Integer ) -> ((p1 -> (q1 -> p1)) -> o1)) -> o1)) -> i1)) -> i1)) -> (Integer ))) -> (Integer )))}
     \end{itemize}
 \end{frame}
 
