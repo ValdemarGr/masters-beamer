@@ -29,12 +29,12 @@
     \end{itemize}
     \item Recursion and lambda lifting.
     \item Runtime systems.\\
-    \texttt{fun f x = x + (f (x - 1)); fun main = f 5;}\\
-    $\Rightarrow$ $\texttt{let } f = \lambda x.x + (\textit{f } (x - 1)) \texttt{ in } \textit{f } 5$
+    \texttt{fun f x = f x;}\\
+    $\Rightarrow$ $\texttt{let } f = \lambda x.f x \texttt{ in } \dots$
     \\or\\
     $\Rightarrow$ $\texttt{let } f' = (\lambda f''. \texttt{let } f = f'' f'' \texttt{ in }$\\
-    \hspace*{1cm}$\texttt{let } f = \lambda x.x + (\textit{f } (x - 1))$\\
-    $) \texttt{ in } \texttt{let } f = f' f' \texttt{ in } \textit{f } 5$
+    \hspace*{1cm}$\texttt{let } f = \lambda x.f x$\\
+    $) \texttt{ in } \texttt{let } f = f' f' \texttt{ in } \dots$
 \end{itemize}
 \end{frame}
 
@@ -43,9 +43,12 @@
 \begin{columns}
     \begin{column}{0.6\textwidth}
         \begin{itemize}
+            \item Minimal type system.\\
+            $\texttt{let } id = \lambda x.x \texttt{ in } \dots$\\
+            where $id: a \rightarrow a$ then $(id \,\, id) 5$?
             \item Mono, poly and environment.
             \item Generalization and instantitation.
-            \item Let polymorphism and type hierachy ($\sqsubseteq$).
+            \item Let polymorphism, recursion and type hierachy ($\sqsubseteq$).
         \end{itemize}
     \end{column}
     
@@ -214,9 +217,9 @@
 \frametitle{Evaluation}
     \begin{itemize}
         \item Evaluation by substitution.
-        \item Call by need and call by value.
+        \item Call by name and call by value.
         \item Storing labelled expressions.
-        \item Freshness.
+        \item Freshness ($k \notin \textit{bound}(e)$ and clearly $k \notin \textit{free}(e)$).
     \end{itemize}
 \end{frame}
 
@@ -225,6 +228,7 @@
 \frametitle{Errata}
     \begin{itemize}
         \item "Considerations of functional programming language implmentations."
+        \item Case instead of Scott encoding.
         \item Multi let for shared scopes (mutual recursion) (the reconstruction algorithm).
     \end{itemize}
     \begin{figure}
