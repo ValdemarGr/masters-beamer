@@ -16,6 +16,9 @@
 \institute{Department of Mathematics and Computer Science (IMADA)}
 \date{}
 
+\addtobeamertemplate{navigation symbols}{}{ \hspace{1em}    \usebeamerfont{footline}%
+    \insertframenumber / \inserttotalframenumber }
+
 \begin{document}
 
 \frame{\titlepage}
@@ -45,7 +48,7 @@
         \begin{itemize}
             \item Minimal type system.\\
             $\texttt{let } id = \lambda x.x \texttt{ in } \dots$\\
-            where $id: a \rightarrow a$ then $(id \,\, id) 5$?
+            where $id: a \rightarrow a$ then $(id \,\, id) (id \,\, 5)$?
             \item Mono, poly and environment.
             \item Generalization and instantitation.
             \item Let polymorphism, recursion and type hierachy ($\sqsubseteq$).
@@ -229,8 +232,19 @@
     \begin{itemize}
         \item "Considerations of functional programming language implmentations."
         \item Case instead of Scott encoding.
-        \item Multi let for shared scopes (mutual recursion) (the reconstruction algorithm).
+        \item Multi let for shared scopes (mutual recursion) (the reconstruction algorithm), invalidates some of Section 2.
     \end{itemize}
+    \begin{figure}
+        \begin{subfigure}[b]{1\textwidth}
+        \begin{prooftree}
+            \AxiomC{\texttt{$\Gamma$ $\cup$ \{$\gamma$ $\mapsto$ \textcolor{red}{\{x $\mapsto$ $\gamma$\}}e\}, \{x $\mapsto$ $\gamma$\}p $\rightarrow$ $\Theta$, l}}
+            \AxiomC{\texttt{$\gamma$ = fresh}}
+            \BinaryInfC{\texttt{$\Gamma$, let x = e in p $\rightarrow$ $\Theta$, l}}
+        \end{prooftree}
+        \caption{Let with recursion}
+        \end{subfigure}
+    \end{figure}
+
     \begin{figure}
     \hspace*{-1.5cm}
     \begin{subfigure}[b]{1\textwidth}
